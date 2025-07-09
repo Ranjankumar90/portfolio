@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'node:18'           // ✅ Node.js + npm preinstalled
+      args '-u root'            // ✅ Run as root to allow Docker inside Docker (optional)
+    }
+  }
 
   environment {
     IMAGE_NAME = 'ranjan9kumar/my-frontend-app'
