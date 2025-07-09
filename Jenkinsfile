@@ -2,16 +2,10 @@ pipeline {
   agent any
 
   environment {
-    IMAGE_NAME = 'ranjan9kumar/my-frontend-app'  // ✅ Replace with your actual DockerHub repo
+    IMAGE_NAME = 'ranjan9kumar/my-frontend-app'
   }
 
   stages {
-    stage('Clone Repo') {
-      steps {
-git 'https://github.com/Ranjankumar90/portfolio.git'
-      }
-    }
-
     stage('Install Dependencies') {
       steps {
         sh 'npm install'
