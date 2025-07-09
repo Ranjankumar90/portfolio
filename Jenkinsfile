@@ -5,19 +5,14 @@ pipeline {
     IMAGE_NAME = 'ranjan9kumar/portfolio-app'
   }
 
+  tools {
+    nodejs 'node-18'  // Define this name in Jenkins global tool config
+  }
+
   stages {
     stage('Checkout Code') {
       steps {
-        git credentialsId: 'github-token', url: 'https://github.com/Ranjankumar90/portfolio.git', branch: 'main'
-      }
-    }
-
-    stage('Install Node.js') {
-      steps {
-        sh '''
-          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-        '''
+        git credentialsId: 'Token2025', url: 'https://github.com/Ranjankumar90/portfolio.git', branch: 'main'
       }
     }
 
