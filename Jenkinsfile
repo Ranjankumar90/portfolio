@@ -5,10 +5,6 @@ pipeline {
     IMAGE_NAME = 'ranjan9kumar/portfolio-app'
   }
 
-  tools {
-    nodejs 'node-18'  // Define this name in Jenkins global tool config
-  }
-
   stages {
     stage('Checkout Code') {
       steps {
@@ -16,15 +12,39 @@ pipeline {
       }
     }
 
+    stage('Install Node.js with nvm') {
+      steps {
+        sh '''
+          export NVM_DIR="$HOME/.nvm"
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+          . "$NVM_DIR/nvm.sh"
+          nvm install 18
+          nvm use 18
+          node -v
+          npm -v
+        '''
+      }
+    }
+
     stage('Install Dependencies') {
       steps {
-        sh 'npm install'
+        sh '''
+          export NVM_DIR="$HOME/.nvm"
+          . "$NVM_DIR/nvm.sh"
+          nvm use 18
+          npm install
+        '''
       }
     }
 
     stage('Build App') {
       steps {
-        sh 'npm run build'
+        sh '''
+          export NVM_DIR="$HOME/.nvm"
+          . "$NVM_DIR/nvm.sh"
+          nvm use 18
+          npm run build
+        '''
       }
     }
 
