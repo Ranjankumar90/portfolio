@@ -1,19 +1,25 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'node:18'
+      args '-u root' // run as root to install packages and use Docker
+    }
+  }
+
+  environment {
+    // Your Docker Hub image name
+    IMAGE_NAME = 'ranjan9kumar/my-frontend-app'
+  }
 
   stages {
-    stage('Install Node.js') {
+
+    stage('Checkout Code') {
       steps {
-        sh '''
-          curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-          apt-get install -y nodejs
-          node -v
-          npm -v
-        '''
+        git credentialsId: 'Token2025', url: 'https://github.com/Ranjankumar90/portfolio.git', branch: 'main'
       }
     }
 
-    stage('Install Deps') {
+    stage('Install Dependencies') {
       steps {
         sh 'npm install'
       }
@@ -27,15 +33,17 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t ranjan9kumar/my-frontend-app .'
+        sh 'docker build -t $IMAGE_NAME .'
       }
     }
 
-    stage('Push Docker Image') {
+    stage('Push to Docker Hub') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-          sh 'echo $PASS | docker login -u $USER --password-stdin'
-          sh 'docker push ranjan9kumar/my-frontend-app'
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+          sh '''
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+            docker push $IMAGE_NAME
+          '''
         }
       }
     }
