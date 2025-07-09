@@ -1,21 +1,23 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:18'
-      args '-u root' // run as root to install packages and use Docker
-    }
-  }
+  agent any
 
   environment {
-    // Your Docker Hub image name
-    IMAGE_NAME = 'ranjan9kumar/my-frontend-app'
+    IMAGE_NAME = 'ranjan9kumar/portfolio-app'
   }
 
   stages {
-
     stage('Checkout Code') {
       steps {
-        git credentialsId: 'Token2025', url: 'https://github.com/Ranjankumar90/portfolio.git', branch: 'main'
+        git credentialsId: 'github-token', url: 'https://github.com/Ranjankumar90/portfolio.git', branch: 'main'
+      }
+    }
+
+    stage('Install Node.js') {
+      steps {
+        sh '''
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+        '''
       }
     }
 
@@ -37,7 +39,7 @@ pipeline {
       }
     }
 
-    stage('Push to Docker Hub') {
+    stage('Push Docker Image') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
