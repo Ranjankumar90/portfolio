@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Clone Repo') {
       steps {
-        git 'https://github.com/Ranjankumar90/your-repo-name.git'  // ✅ Replace with your GitHub repo
+git 'https://github.com/Ranjankumar90/portfolio.git'
       }
     }
 
