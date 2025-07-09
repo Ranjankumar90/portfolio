@@ -3,6 +3,7 @@ pipeline {
 
   environment {
     IMAGE_NAME = 'ranjan9kumar/portfolio-app'
+    NVM_DIR = "${HOME}/.nvm"
   }
 
   stages {
@@ -12,7 +13,7 @@ pipeline {
       }
     }
 
-    stage('Install Node.js with nvm') {
+    stage('Install Node.js') {
       steps {
         sh '''
           export NVM_DIR="$HOME/.nvm"
