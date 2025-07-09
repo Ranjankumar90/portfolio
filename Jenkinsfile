@@ -1,17 +1,19 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:18'           // ✅ Node.js + npm preinstalled
-      args '-u root'            // ✅ Run as root to allow Docker inside Docker (optional)
-    }
-  }
-
-  environment {
-    IMAGE_NAME = 'ranjan9kumar/my-frontend-app'
-  }
+  agent any
 
   stages {
-    stage('Install Dependencies') {
+    stage('Install Node.js') {
+      steps {
+        sh '''
+          curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+          apt-get install -y nodejs
+          node -v
+          npm -v
+        '''
+      }
+    }
+
+    stage('Install Deps') {
       steps {
         sh 'npm install'
       }
@@ -25,15 +27,15 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t $IMAGE_NAME .'
+        sh 'docker build -t ranjan9kumar/my-frontend-app .'
       }
     }
 
-    stage('Push to Docker Hub') {
+    stage('Push Docker Image') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
           sh 'echo $PASS | docker login -u $USER --password-stdin'
-          sh 'docker push $IMAGE_NAME'
+          sh 'docker push ranjan9kumar/my-frontend-app'
         }
       }
     }
